@@ -113,6 +113,7 @@ class ProduitDaoImplTest {
 		assertEquals(produitsExpected.toString(), actual.toString());
 	}
 	
+	
   // Test recheche par nom et prix
 	@Test
 	void testFindByNamePrice() {
