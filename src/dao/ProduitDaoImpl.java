@@ -229,7 +229,6 @@ public class ProduitDaoImpl implements ProduitDao {
 		}
 		return lesProduits;
 	}
-
 	
 	public HashMap<Integer, Produit> findByPriceCategorie(int id_categorie, int prix) {
 		HashMap<Integer, Produit> lesProduits = new HashMap<Integer, Produit>();
