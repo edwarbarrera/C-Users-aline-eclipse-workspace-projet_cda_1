@@ -3,6 +3,7 @@ package dao;
 import java.util.HashMap;
 
 import entity.Personne;
+import entity.Produit;
 
 public class PersonneDaoImpl implements PersonneDao {
 
@@ -25,5 +26,7 @@ public class PersonneDaoImpl implements PersonneDao {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
 
 }

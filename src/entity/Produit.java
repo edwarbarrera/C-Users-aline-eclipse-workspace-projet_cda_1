@@ -7,11 +7,31 @@ private String nom;
 private int quantite;
 private String description;
 private String url_image;
+private int id_categorie;
 private double prix;
 
 public Produit() {
 	super();
 	// TODO Auto-generated constructor stub
+}
+
+public Produit(int id, String nom, int quantite, String description, String url_image, int id_categorie, double prix) {
+	super();
+	this.id = id;
+	this.nom = nom;
+	this.quantite = quantite;
+	this.description = description;
+	this.url_image = url_image;
+	this.id_categorie = id_categorie;
+	this.prix = prix;
+}
+
+public int getId_categorie() {
+	return id_categorie;
+}
+
+public void setId_categorie(int id_categorie) {
+	this.id_categorie = id_categorie;
 }
 
 public int getId() {
@@ -54,8 +74,10 @@ public void setPrix(double prix) {
 @Override
 public String toString() {
 	return "Produit [id=" + id + ", nom=" + nom + ", quantite=" + quantite + ", description=" + description
-			+ ", url_image=" + url_image + ", prix=" + prix + "]";
+			+ ", url_image=" + url_image + ", id_categorie=" + id_categorie + ", prix=" + prix + "]";
 }
+
+
 
 
 }

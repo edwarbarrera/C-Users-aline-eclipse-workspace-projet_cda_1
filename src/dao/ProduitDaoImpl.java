@@ -3,34 +3,33 @@ package dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 
-import entity.Categorie;
+
 import entity.Produit;
 
 public class ProduitDaoImpl implements ProduitDao {
 
-	public void insert(Produit t) { //Remplacer toutes les requêtes par des prepared statements + rajouter des throws
-		try {
+	public void insert(Produit t) throws SQLException { //Remplacer toutes les requêtes par des prepared statements + rajouter des throws
 			Connection con = ConnectBd.con;
-			String sql = "INSERT INTO commande VALUES(?,?,?,?,?,?);";
-			PreparedStatement prep = con.prepareStatement(sql);
+			String sql = "INSERT INTO produit (id_produit, nom, quantite, description, url_image, id_categorie, prix_actuel) VALUES(?,?,?,?,?,?,?);";
+			PreparedStatement prep = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			prep.setInt(1, t.getId());
 			prep.setString(2, t.getNom());
 			prep.setInt(3, t.getQuantite());
 			prep.setString(4, t.getDescription());
 			prep.setString(5, t.getUrl_image());
-			prep.setDouble(6, t.getPrix());
+			prep.setInt(6, t.getId_categorie());
+			prep.setDouble(7, t.getPrix());
 			prep.executeUpdate();
-			// recuperer le dernier index   ( = index du client)
-			// mettre cet index dans l'idClient de la commande
-			
-			
-		} catch (Exception e) {
-			e.printStackTrace();
+			ResultSet rs = prep.getGeneratedKeys();
+			if (rs.next()) {
+				t.setId(rs.getInt(1));
 		}
 	}
+	
 
 	public boolean delete(int id) {
 		try {
@@ -58,6 +57,7 @@ public class ProduitDaoImpl implements ProduitDao {
 				p.setQuantite ( res.getInt("quantite") );
 				p.setDescription ( res.getString("description") );
 				p.setUrl_image ( res.getString("url_image") );
+				p.setId_categorie(res.getInt("id_categorie") );
 				p.setPrix ( res.getDouble("prix_actuel") );
 				i+=1;
 				lesProduits.put(i, p);
@@ -82,6 +82,7 @@ public class ProduitDaoImpl implements ProduitDao {
 			p.setQuantite ( res.getInt("quantite") );
 			p.setDescription ( res.getString("description") );
 			p.setUrl_image ( res.getString("url_image") );
+			p.setId_categorie(res.getInt("id_categorie") );
 			p.setPrix ( res.getDouble("prix_actuel") );
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -89,112 +90,144 @@ public class ProduitDaoImpl implements ProduitDao {
 		return p;
 	}
 	
-	public Produit findByName(String nom) { //à voir
-		Produit p = new Produit();
+	public HashMap<Integer, Produit>  findByMotCle(String nom) { 
+		HashMap<Integer, Produit> lesProduits = new HashMap<Integer, Produit>();
+		int i = 0;
 		try {
 			Connection con = ConnectBd.con;
-            String sql = "SELECT * FROM produit WHERE nom =?";                    
+            String sql = "SELECT * FROM produit WHERE nom LIKE CONCAT( '%', TRIM(?), '%') ";                    
             PreparedStatement canal = con.prepareStatement(sql);                         
             canal.setString(1, nom);                                                         
             ResultSet res = canal.executeQuery();                                         
-			res.next();
-			p.setId( res.getInt("id_produit") );
-			p.setNom ( res.getString("nom") );
-			p.setQuantite ( res.getInt("quantite") );
-			p.setDescription ( res.getString("description") );
-			p.setUrl_image ( res.getString("url_image") );
-			p.setPrix ( res.getDouble("prix_actuel") );
+            while( res.next() ){
+				Produit p = new Produit();
+				p.setId( res.getInt("id_produit") );
+				p.setNom ( res.getString("nom") );
+				p.setQuantite ( res.getInt("quantite") );
+				p.setDescription ( res.getString("description") );
+				p.setUrl_image ( res.getString("url_image") );
+				p.setId_categorie(res.getInt("id_categorie") );
+				p.setPrix ( res.getDouble("prix_actuel") );
+				i+=1;
+				lesProduits.put(i, p);
+            }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return p;
+		return lesProduits;
 		
 	}
 
-	public Produit findByPrice(Double prix) {
-		Produit p = new Produit();
+	public HashMap<Integer, Produit> findByPrice(int prix) {
+		HashMap<Integer, Produit> lesProduits = new HashMap<Integer, Produit>();
+		int i = 0;
 		try {
 			Connection con = ConnectBd.con;
-            String sql = "SELECT * FROM produit WHERE prix_actuel =?";                     
+            String sql = "SELECT * FROM produit WHERE prix_actuel <= ?";                  
             PreparedStatement canal = con.prepareStatement(sql);                         
-            canal.setDouble(1, prix);                                                         
+            canal.setDouble(1,  prix);                                                     
             ResultSet res = canal.executeQuery();                                         
-			res.next();
-			p.setId( res.getInt("id_produit") );
-			p.setNom ( res.getString("nom") );
-			p.setQuantite ( res.getInt("quantite") );
-			p.setDescription ( res.getString("description") );
-			p.setUrl_image ( res.getString("url_image") );
-			p.setPrix ( res.getDouble("prix_actuel") );
+            while( res.next() ){
+    			Produit p = new Produit();
+    			p.setId( res.getInt("id_produit") );
+    			p.setNom ( res.getString("nom") );
+    			p.setQuantite ( res.getInt("quantite") );
+    			p.setDescription ( res.getString("description") );
+    			p.setUrl_image ( res.getString("url_image") );
+    			p.setId_categorie(res.getInt("id_categorie") );
+    			p.setPrix ( res.getDouble("prix_actuel") );
+    			i+=1;
+    			lesProduits.put(i, p);
+                }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return p;
+		return lesProduits;
 	}
 
-	public Produit findByCategorie(String libelle) {
-		Produit p = new Produit();
+	public HashMap<Integer, Produit>  findByCategorie(int id_categorie) { 
+		HashMap<Integer, Produit> lesProduits = new HashMap<Integer, Produit>();
+		int i = 0;
 		try {
 			Connection con = ConnectBd.con;
-            String sql = "SELECT * FROM produit p JOIN categorie c ON c.id_categorie = p.id_categorie WHERE libelle = ? ";                     
+            String sql = "SELECT * FROM produit WHERE id_categorie =?";                  
             PreparedStatement canal = con.prepareStatement(sql);                         
-            canal.setString(1, libelle);                                                         
+            canal.setInt(1, id_categorie);                                                         
             ResultSet res = canal.executeQuery();                                         
-			res.next();
-			p.setId( res.getInt("id_produit") );
-			p.setNom ( res.getString("nom") );
-			p.setQuantite ( res.getInt("quantite") );
-			p.setDescription ( res.getString("description") );
-			p.setUrl_image ( res.getString("url_image") );
-			p.setPrix ( res.getDouble("prix_actuel") );
+            while( res.next() ){
+    			Produit p = new Produit();
+    			p.setId( res.getInt("id_produit") );
+    			p.setNom ( res.getString("nom") );
+    			p.setQuantite ( res.getInt("quantite") );
+    			p.setDescription ( res.getString("description") );
+    			p.setUrl_image ( res.getString("url_image") );
+    			p.setId_categorie(res.getInt("id_categorie") );
+    			p.setPrix ( res.getDouble("prix_actuel") );
+    			i+=1;
+    			lesProduits.put(i, p);
+                }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return p;
+		return lesProduits;
 	}
 
-	public Produit findByNameCategorie(String nom, int ref) {
-		Produit p = new Produit();
+	public HashMap<Integer, Produit> findByNameCategorie(String nom, int id_categorie) {
+		HashMap<Integer, Produit> lesProduits = new HashMap<Integer, Produit>();
+		int i = 0;
 		try {
 			Connection con = ConnectBd.con;
-            String sql = "SELECT * FROM produit p WHERE nom = ? AND id_categorie = ? ";                     
-            PreparedStatement canal = con.prepareStatement(sql);                         
+            String sql = "SELECT * FROM produit WHERE nom LIKE CONCAT( '%', TRIM(?), '%') AND id_categorie = ? ";                     
+            PreparedStatement canal = con.prepareStatement(sql);
             canal.setString(1, nom);
-            canal.setInt(1, ref);  
+            canal.setInt(2, id_categorie);  
             ResultSet res = canal.executeQuery();                                         
-			res.next();
-			p.setId( res.getInt("id_produit") );
-			p.setNom ( res.getString("nom") );
-			p.setQuantite ( res.getInt("quantite") );
-			p.setDescription ( res.getString("description") );
-			p.setUrl_image ( res.getString("url_image") );
-			p.setPrix ( res.getDouble("prix_actuel") );
+            while( res.next() ){
+    			Produit p = new Produit();
+    			p.setId( res.getInt("id_produit") );
+    			p.setNom ( res.getString("nom") );
+    			p.setQuantite ( res.getInt("quantite") );
+    			p.setDescription ( res.getString("description") );
+    			p.setUrl_image ( res.getString("url_image"));
+    			p.setId_categorie(res.getInt("id_categorie") );
+    			p.setPrix ( res.getDouble("prix_actuel") );
+    			i+=1;
+    			lesProduits.put(i, p);
+                }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return p;
+		return lesProduits;
+		
+		
 	}
 
-	public Produit findByNamePrice(String nom, Double prix) {
-		Produit p = new Produit();
+	public HashMap<Integer, Produit> findByNamePrice(String nom, int prix) {
+		HashMap<Integer, Produit> lesProduits = new HashMap<Integer, Produit>();
+		int i = 0;
 		try {
 			Connection con = ConnectBd.con;
-            String sql = "SELECT * FROM produit p WHERE nom = ? AND prix_actuel = ? ";                     
-            PreparedStatement canal = con.prepareStatement(sql);                         
+            String sql = "SELECT * FROM produit p WHERE nom LIKE CONCAT( '%', TRIM(?), '%') AND prix_actuel <= ? ";                     
+            PreparedStatement canal = con.prepareStatement(sql);
             canal.setString(1, nom);
-            canal.setDouble(1, prix);
+            canal.setDouble(2, prix);  
             ResultSet res = canal.executeQuery();                                         
-			res.next();
-			p.setId( res.getInt("id_produit") );
-			p.setNom ( res.getString("nom") );
-			p.setQuantite ( res.getInt("quantite") );
-			p.setDescription ( res.getString("description") );
-			p.setUrl_image ( res.getString("url_image") );
-			p.setPrix ( res.getDouble("prix_actuel") );
+            while( res.next() ){
+    			Produit p = new Produit();
+    			p.setId( res.getInt("id_produit") );
+    			p.setNom ( res.getString("nom") );
+    			p.setQuantite ( res.getInt("quantite") );
+    			p.setDescription ( res.getString("description") );
+    			p.setUrl_image ( res.getString("url_image"));
+    			p.setId_categorie(res.getInt("id_categorie") );
+    			p.setPrix ( res.getDouble("prix_actuel") );
+    			i+=1;
+    			lesProduits.put(i, p);
+                }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return p;
+		return lesProduits;
 	}
 
 	public Produit findByPriceCategorie(Double prix, int ref) {

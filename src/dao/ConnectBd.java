@@ -6,8 +6,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 public class ConnectBd {
 	public static Connection con = null;
@@ -24,7 +22,7 @@ public class ConnectBd {
 	
 	public static void connecte() throws SQLException{ // prendre des SQLException
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
+			Class.forName("com.mysql.jdbc.Driver"); 
 		}
 		
 		catch (ClassNotFoundException e) {
@@ -32,7 +30,7 @@ public class ConnectBd {
 	    }
 		
 		try {
-			con = DriverManager.getConnection("jdbc:mysql://localhost/projet_cda_1?serverTimezone=UTC", "root", "root");
+			con = DriverManager.getConnection("jdbc:mysql://localhost/projet_cda_1","root","root");
 	        Statement canal = con.createStatement();
 		}
 		
@@ -43,17 +41,15 @@ public class ConnectBd {
 		System.out.println("Connecté");
 	}
 		
-		/** Reinitialise la base encheres en exécutant la procédure stockable
+		/** Reinitialise la base encheres en exécutant la procédure stockée
 		 * encheres_refresh.
-		 * @param instant
 		 * @throws SQLException
 		 */
-		public static void reset(LocalDateTime instant) throws SQLException {
+		public static void reset() throws SQLException {
 			if (con == null) {
 				connecte();
 			}
-			CallableStatement stmt = (CallableStatement) con.prepareCall("CALL projet_cda_1_refresh(?)");
-			stmt.setTimestamp(1, Timestamp.valueOf(instant));
+			CallableStatement stmt = (CallableStatement) con.prepareCall("CALL projet_cda_1_refresh()");
 			stmt.execute();
 		}
 	

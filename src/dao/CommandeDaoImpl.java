@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 
 import entity.Commande;
+import entity.Produit;
 
 public class CommandeDaoImpl implements CommandeDao {
 
@@ -67,5 +68,7 @@ public class CommandeDaoImpl implements CommandeDao {
 		}
 		return c;
 	}
+
+
 
 }
