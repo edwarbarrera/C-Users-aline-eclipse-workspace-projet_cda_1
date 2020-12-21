@@ -71,7 +71,7 @@ class ProduitDaoImplTest {
 		assertEquals(produitsExpected.toString(), actual.toString());
 	}
 
-	//
+	// test recherche par prix Max
 	@Test
 	void testFindByPrice() {
 		HashMap<Integer, Produit> produitsExpected = new HashMap<Integer, Produit>();
@@ -125,14 +125,29 @@ class ProduitDaoImplTest {
 		assertEquals(produitsExpected.toString(), actual.toString());
 	}
 
-//	@Test
-//	void testFindByPriceCategorie() {
-//		fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	void testFindByAll() {
-//		fail("Not yet implemented");
-//	}
+	// test recherche par categorix et prix 
+	@Test
+	void testFindByPriceCategorie() {
+		HashMap<Integer, Produit> produitsExpected = new HashMap<Integer, Produit>();
+		Produit p1 = new Produit  (8, "Le tour du monde en 80 jours", 85, "En 1872, un riche gentleman londonien, Phileas Fogg, parie vingt mille livres qu'il fera le tour du monde en quatre-vingts jours. Accompagné de son valet de chambre, le dévoué Passepartout, il quitte Londres pour une formidable course contre la montre. Au prix de mille aventures, notre héros va s'employer à gagner ce pari.",
+	            "urlimage", 1, 5.5);
+		produitsExpected.put(1, p1);
+		ProduitDao dao = new ProduitDaoImpl();
+		HashMap<Integer, Produit> actual = dao.findByPriceCategorie(1, 6);
+		assertEquals(produitsExpected.toString(), actual.toString());
+	}
+
+	// Test recherche par nom prix et categorie
+	@Test
+	void testFindByAll() {
+		HashMap<Integer, Produit> produitsExpected = new HashMap<Integer, Produit>();
+		Produit p1 = new Produit (4, "Voyage au centre de la Terre", 56, "Le professeur Lidenbrock est persuadé d'avoir découvert le chemin qui mène au centre de la Terre. Accompagné de son neveu Axel, l'impétueux géologue part en Islande. Là, au fond d'un volcan, les deux explorateurs et leur guide s'enfoncent dans les entrailles mystérieuses du globe. Un voyage d'une folle audace, véritable défi lancé à la science.",
+	            "urlimage", 1, 9.99);
+		produitsExpected.put(1, p1);
+		ProduitDao dao = new ProduitDaoImpl();
+		HashMap<Integer, Produit> actual = dao.findByAll("voyage", 10, 1);
+		assertEquals(produitsExpected.toString(), actual.toString());
+	}
+	
 
 }

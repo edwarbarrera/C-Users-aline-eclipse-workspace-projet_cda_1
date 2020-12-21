@@ -230,49 +230,61 @@ public class ProduitDaoImpl implements ProduitDao {
 		return lesProduits;
 	}
 
-	public Produit findByPriceCategorie(Double prix, int ref) {
-		Produit p = new Produit();
+	public HashMap<Integer, Produit> findByPriceCategorie(int id_categorie, int prix) {
+		HashMap<Integer, Produit> lesProduits = new HashMap<Integer, Produit>();
+		int i = 0;
 		try {
 			Connection con = ConnectBd.con;
-            String sql = "SELECT * FROM produit p WHERE prix_actuel = ? AND id_categorie = ? ";                     
-            PreparedStatement canal = con.prepareStatement(sql);                         
-            canal.setDouble(1, prix);
-            canal.setInt(1, ref);  
+            String sql = "SELECT * FROM produit WHERE id_categorie = ? AND prix_actuel <= ? ";                     
+            PreparedStatement canal = con.prepareStatement(sql);
+            canal.setInt(1, id_categorie);
+            canal.setInt(2, prix);  
             ResultSet res = canal.executeQuery();                                         
-			res.next();
-			p.setId( res.getInt("id_produit") );
-			p.setNom ( res.getString("nom") );
-			p.setQuantite ( res.getInt("quantite") );
-			p.setDescription ( res.getString("description") );
-			p.setUrl_image ( res.getString("url_image") );
-			p.setPrix ( res.getDouble("prix_actuel") );
+            while( res.next() ){
+    			Produit p = new Produit();
+    			p.setId( res.getInt("id_produit") );
+    			p.setNom ( res.getString("nom") );
+    			p.setQuantite ( res.getInt("quantite") );
+    			p.setDescription ( res.getString("description") );
+    			p.setUrl_image ( res.getString("url_image"));
+    			p.setId_categorie(res.getInt("id_categorie") );
+    			p.setPrix ( res.getDouble("prix_actuel") );
+    			i+=1;
+    			lesProduits.put(i, p);
+                }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return p;
+		return lesProduits;
 	}
 
-	public Produit findByAll(String nom, Double prix, int ref) {
-		Produit p = new Produit();
+	public HashMap<Integer, Produit> findByAll(String nom, int prix, int id_categorie) {
+		HashMap<Integer, Produit> lesProduits = new HashMap<Integer, Produit>();
+		int i = 0;
 		try {
 			Connection con = ConnectBd.con;
-            String sql = "SELECT * FROM produit p WHERE nom = ? AND prix_actuel = ? AND id_categorie = ? ";                     
-            PreparedStatement canal = con.prepareStatement(sql);                         
-            canal.setString(1, nom); 
-            canal.setDouble(1, prix);
-            canal.setInt(1, ref);  
+            String sql = "SELECT * FROM produit p WHERE nom LIKE CONCAT( '%', TRIM(?), '%') AND prix_actuel <= ? AND id_categorie = ? ";                     
+            PreparedStatement canal = con.prepareStatement(sql);
+            canal.setString(1, nom);
+            canal.setInt(2, prix);  
+            canal.setInt(3, id_categorie);
             ResultSet res = canal.executeQuery();                                         
-			res.next();
-			p.setId( res.getInt("id_produit") );
-			p.setNom ( res.getString("nom") );
-			p.setQuantite ( res.getInt("quantite") );
-			p.setDescription ( res.getString("description") );
-			p.setUrl_image ( res.getString("url_image") );
-			p.setPrix ( res.getDouble("prix_actuel") );
+            while( res.next() ){
+    			Produit p = new Produit();
+    			p.setId( res.getInt("id_produit") );
+    			p.setNom ( res.getString("nom") );
+    			p.setQuantite ( res.getInt("quantite") );
+    			p.setDescription ( res.getString("description") );
+    			p.setUrl_image ( res.getString("url_image"));
+    			p.setId_categorie(res.getInt("id_categorie") );
+    			p.setPrix ( res.getDouble("prix_actuel") );
+    			i+=1;
+    			lesProduits.put(i, p);
+                }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return p;
+		return lesProduits;
 	}
 
 }
