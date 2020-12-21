@@ -112,8 +112,7 @@ class ProduitDaoImplTest {
 		HashMap<Integer, Produit> actual = dao.findByNameCategorie("aventure", 3);
 		assertEquals(produitsExpected.toString(), actual.toString());
 	}
-	
-	
+		
   // Test recheche par nom et prix
 	@Test
 	void testFindByNamePrice() {
