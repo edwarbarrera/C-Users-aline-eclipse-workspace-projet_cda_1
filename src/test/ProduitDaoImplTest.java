@@ -149,5 +149,4 @@ class ProduitDaoImplTest {
 		assertEquals(produitsExpected.toString(), actual.toString());
 	}
 	
-
 }
