@@ -95,9 +95,10 @@ public class ProduitDaoImpl implements ProduitDao {
 		int i = 0;
 		try {
 			Connection con = ConnectBd.con;
-            String sql = "SELECT * FROM produit WHERE nom LIKE CONCAT( '%', TRIM(?), '%') ";                    
+            String sql = "SELECT * FROM produit WHERE nom LIKE CONCAT( '%', TRIM(?), '%') OR description LIKE CONCAT( '%', TRIM(?), '%')";                    
             PreparedStatement canal = con.prepareStatement(sql);                         
-            canal.setString(1, nom);                                                         
+            canal.setString(1, nom);  
+            canal.setString(2, nom);  
             ResultSet res = canal.executeQuery();                                         
             while( res.next() ){
 				Produit p = new Produit();

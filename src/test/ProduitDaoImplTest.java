@@ -58,16 +58,14 @@ class ProduitDaoImplTest {
 	@Test
 	void testFindByMotCle() {
 		HashMap<Integer, Produit> produitsExpected = new HashMap<Integer, Produit>();
-		Produit p1 = new Produit(6, "Tout JavaScript", 10, "Ce livre s’adresse à tous les développeurs web, qu’ils soient  débutants ou avancés."
-				+ " Le JavaScript sert avant tout à rendre les pages web interactives  et dynamiques du côté de l’utilisateur, mais il est  également de plus en plus utilisé pour créer des applications  complètes, y compris côté serveur",
-                "https://raw.githubusercontent.com/edwarbarrera/C-Users-aline-eclipse-workspace-projet_cda_1/master/WebContent/ressources/img/tout%20javascript.jpg", 2, 22.9);
-		Produit p2 = new Produit(8, "Le tour du monde en 80 jours", 85, "En 1872, un riche gentleman londonien, Phileas Fogg, parie vingt mille livres qu'il fera le tour du monde en quatre-vingts jours. "
-				+ "Accompagné de son valet de chambre, le dévoué Passepartout, il quitte Londres pour une formidable course contre la montre. Au prix de mille aventures, notre héros va s'employer à gagner ce pari.",
-	            "https://raw.githubusercontent.com/edwarbarrera/C-Users-aline-eclipse-workspace-projet_cda_1/master/WebContent/ressources/img/le%20tour%20du%20monde%20en%2080%20jours.jpg", 1, 5.5);
+		Produit p1 = new Produit(5, "L'île mystérieuse", 200, "Une île déserte, en plein océan Pacifique. Cinq naufragés américains organisent leur survie, accompagnés de leur chien Top. Bientôt, phénomènes inexplicables et coïncidences troublantes se multiplient, comme si quelqu'un ou quelque chose tentait de les aider. à distance. Quel est donc le secret de l'île ?",
+	            "https://raw.githubusercontent.com/edwarbarrera/C-Users-aline-eclipse-workspace-projet_cda_1/master/WebContent/ressources/img/L'Ile%20myst%C3%A9rieuse.jpg", 1, 7.89);
+		Produit p2 = new Produit(21, "Le chien des Baskerville ", 50, "L'héritier des Baskerville est retrouvé mort. Doit-on accuser ce chien démoniaque qui rôde sur la lande, sur les terres de la famille Baskerville ? Quiconque l'aperçoit est perdu. Pour Sherlock Holmes, cette histoire n'est qu'une obscure légende. Et il le prouvera. Le voilà donc sur les traces de la bête diabolique.",
+	            "https://raw.githubusercontent.com/edwarbarrera/C-Users-aline-eclipse-workspace-projet_cda_1/master/WebContent/ressources/img/Le%20chien%20des%20Baskerville%20.jpg", 2, 5.9);     
 		produitsExpected.put(1, p1);
 		produitsExpected.put(2, p2);
 		ProduitDao dao = new ProduitDaoImpl();
-		HashMap<Integer, Produit> actual = dao.findByMotCle("tou");
+		HashMap<Integer, Produit> actual = dao.findByMotCle("chien");
 		assertEquals(produitsExpected.toString(), actual.toString());
 	}
 
