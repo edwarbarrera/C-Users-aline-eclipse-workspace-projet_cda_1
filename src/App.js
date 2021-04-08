@@ -1,6 +1,5 @@
 import React from 'react';
 
-import './App.css';
 import {Link, Route} from 'react-router-dom';
 import Produits from './Produits';
 import Categories from './Categories';
@@ -78,10 +77,10 @@ class App extends React.Component{
           {(this.state.currentUser) && <div>
                                         <span>Vous êtes connecté entant que : {this.state.currentUser.username} | </span>
                                         <a href="/login" className="nav-link" onClick={this.logOut}>
-                                          Se déconnecter
+                                        <button className="connexion">Se déconnecter</button>
                                         </a>
                                       </div>}
-          {(!this.state.currentUser) && <Link to="/login">Se connecter</Link>}
+          {(!this.state.currentUser) && <Link to="/login" ><button className="connexion">Se connecter</button></Link>}
           
         </header>
         <main>

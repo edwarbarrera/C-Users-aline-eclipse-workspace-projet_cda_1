@@ -30,8 +30,8 @@ export default class Produits extends React.Component {
         this.getProduits(currentPage, this.state.parPage, this.state.motCle);
       }
 
-      getProduits=(numeroPage=this.state.currentPage, parPage=this.state.parPage, motCle="")=>{ 
-        ProduitService.getProduits(numeroPage, parPage, motCle).then((response)=>{
+      getProduits=(numeroPage=this.state.currentPage, parPage=this.state.parPage, motCle="", categorie=this.state.categorie)=>{ 
+        ProduitService.getProduits(numeroPage, parPage, motCle,categorie).then((response)=>{
             console.log(response.data);
             this.setState({produits: response.data})
           }, (error)=>{
@@ -101,12 +101,12 @@ export default class Produits extends React.Component {
         //   })
         // }
         ProduitService.createProduit(produit).then((response)=>{
-            console.log(response.data);
+            console.log("Produits/createProduit -> response : "+response.data);
             this.getProduitsCount();
             this.props.history.push(`/produits?currentPage=${this.state.pageCount-1}&motCle=${this.state.motCle}`)
             this.setCurrentPage(this.state.pageCount-1)
           }, (error)=>{
-            console.log(error);
+            console.log("Produits/createProduit -> error : " +error);
             if (error.response) {
               if (error.response.status === 403) {
                 alert("Accès refusé : Connectez-vous en tant qu'Employé pour créer un produit")
@@ -116,88 +116,51 @@ export default class Produits extends React.Component {
               alert(error.message)}
           })
         }
-        
-          // ProduitService.modifProduit(produit).then((response)=>{
-          //   console.log("Produits/modifProduit -> response : "+response.data);
-          //   const res = response.data;
-          //   this.setState({
-          //     produits: this.state.produits.map((p)=> p.id === produit.id_produit ? res : p)
-          // })
-          //   this.props.history.push(`/produits?currentPage=${this.state.pageCount-1}&motCle=${this.state.motCle}`)
-          //   //this.setCurrentPage(this.state.pageCount-1)
-          // }, (error)=>{
-          //   console.log("Produits/modifProduit -> error : " +error);
-          //   if (error.response) {
-          //     if (error.response.status === 403) {
-          //       alert("Accès refusé : Connectez-vous en tant qu'Employé pour modifier un produit")
-          //       this.props.history.push(`/login`)
-          //     }
-          //   }
-         // })
-            // fetch(`http://localhost:8080/api/employe/produits/edit`, {//modifie produit si il exite deja
-            //   method: "PUT",
-            //   headers: {"Content-type": "application/json"},
-            //   body: JSON.stringify(produit)
-            // })
-            // .then((data)=>data.json())
-            // .then((res)=> {
-            //     this.setState(
-            //       {
-            //       produits: this.state.produits.map((p)=> p.id === produit.id_produit ? res : p)
-            //       }
-            //       )
-            //       this.props.history.push(`/produits?currentPage=${this.state.currentPage}&motCle=${this.state.motCle}`)}
-            //   )
-           /*  ProduitService.getProduits().then((response)=>{
-                console.log();
-                this.setState({produits: res.data})
-            }, (error)=>{})**/
-           
+        else{
+          ProduitService.modifProduit(produit).then((response)=>{
+            console.log("Produits/modifProduit -> response : "+response.data);
+            this.getProduitsCount();
+            this.props.history.push(`/produits?currentPage=${this.state.pageCount-1}&motCle=${this.state.motCle}`)
+            this.setCurrentPage(this.state.pageCount-1)
+          }, (error)=>{
+            console.log("Produits/modifProduit -> error : " +error);
+            if (error.response) {
+              if (error.response.status === 403) {
+                alert("Accès refusé : Connectez-vous en tant qu'Employé pour modifier un produit")
+                this.props.history.push(`/login`)
+              }
+            }
+          })
+          } 
         }
 
-      //  delete = (produitId)=>{//productId = 2 => products=[1,3]
-          delete = (id_produit)=>{
-            ProduitService.deleteProduit(id_produit).then((response)=>{
-              console.log("Produits/deleteProduit -> response : "+response.data);
-              this.getProduitsCount();
-              this.props.history.push(`/produits?currentPage=${this.state.pageCount-1}&motCle=${this.state.motCle}`)
-              this.setCurrentPage(this.state.pageCount-1)
-            }, (error)=>{
-              console.log("Produits/createProduit -> error : " +error);
-              if (error.response) {
-                if (error.response.status === 403) {
-                  alert("Accès refusé : Connectez-vous en tant qu'Employé pour supprimer un produit")
-                  this.props.history.push(`/login`)
-                }
+        delete = (id_produit)=>{
+          ProduitService.deleteProduit(id_produit).then((response)=>{
+            console.log("Produits/deleteProduit -> response : "+response.data);
+            this.getProduitsCount();
+            this.props.history.push(`/produits?currentPage=${this.state.pageCount-1}&motCle=${this.state.motCle}`)
+            this.setCurrentPage(this.state.pageCount-1)
+          }, (error)=>{
+            console.log("Produits/createProduit -> error : " +error);
+            if (error.response) {
+              if (error.response.status === 403) {
+                alert("Accès refusé : Connectez-vous en tant qu'Employé pour supprimer un produit")
+                this.props.history.push(`/login`)
               }
-            })
             }
-          //   fetch(`http://localhost:8080/api/employe/delete/produits/${produitId}`, {
-          //     method: "DELETE"
-          //   })
-          //   .then((data)=>{
-          //       console.log(data);
-          //       if (data.status === 200) {
-          //           this.setState(
-          //               {produits : 
-          //                 this.state.produits.filter((produit)=> produit.id !== produitId)})
-          //       }
-          //       else{
-          //           alert("Opération échouée!")
-          //       }
-                
-          //   })
-          // }
-
+          })
+          }
           
-    search = (motCle)=>{
-        this.getProduits(0, this.state.parPage, motCle);
+    search = (motCle, categorie)=>{
+        this.getProduits(0, this.state.parPage, motCle, categorie);
+        console.log(categorie);
         this.getProduitsCount(motCle);
-        this.setState({motCle: motCle, currentPage: 0});
-        this.props.history.push(`/produits?currentPage=${this.state.currentPage}&motCle=${motCle}`);    
+        this.setState({motCle: motCle, categorie: categorie , currentPage: 0});
+        this.props.history.push(`/produits?currentPage=${this.state.currentPage}&motCle=${motCle}&categorie=${categorie}`);    
       }
       clearSearchWord = () =>{
         this.setState({motCle: ""});
+        this.setState({categorie: ""});
         this.props.history.push(`/produits?currentPage=0`);    
         this.getProduits();
         this.getProduitsCount();
@@ -221,7 +184,7 @@ export default class Produits extends React.Component {
         return (
             <React.Fragment>
                 <div className="App-header">
-                    {(isEmploye && <Link to={this.props.match.url + '/create'}>Créer un produit</Link>)}
+                    {(isEmploye && <Link to={this.props.match.url + '/create'}><button className ="Add-Button">Créer un produit</button></Link>)}
                     
                     <SearchBar searchCallback={this.search} searchParPrixCallback={this.searchParPrix} annulerSearchCallback={this.clearSearchWord}annulerSearchParPrixCallback={this.clearSearchParPrix}/>
                 </div>
