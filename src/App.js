@@ -5,59 +5,14 @@ import Produits from './Produits';
 import Categories from './Categories';
 import Login from './Login';
 import AuthService from './AuthService';
-import Panier from './Panier';
-import AccessDenied from'./AccessDenied';
 
 class App extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      currentUser : undefined,
-      panier:[],
-      panierCount:0
+      currentUser : undefined
     }
   }
-  addToCart = (produit, quantite=1)=>{
-    this.setState({panierCount : this.state.panierCount+1})
-    let newProduit = true;
-
-    this.state.panier.forEach(p=>{
-      if(p.id_produit === produit.id_produit){
-        newProduit = false;
-      }
-    })
-    this.setState((state)=>{
-      if (newProduit) {
-        const lignePanier = {id: produit.id_produit, nom: produit.nom, /*prixUnitaire: produit.prixUnitaire, */quantite: quantite};
-        state.panier = [...state.panier, lignePanier];
-        // state.panier = state.panier.concat(lignePanier)
-      }
-      else{
-        state.panier = state.panier.map((p)=>{
-          p.quantite = p.id === produit.id_produit ? p.quantite+1 : p.quantite;
-          return p;
-        })
-      }
-      
-    })
-  }
-  deleteFromCart = (produitId)=>{
-    this.setState((state)=>state.panier = state.panier.filter((p)=>p.id !== produitId))
-  }
-  editCartItem = (produitId, quantite)=>{
-    this.setState((state)=>state.panier = state.panier.map((p)=> {
-        p.quantite = p.id === produitId ? quantite : p.quantite;
-        return p;
-      }
-    ))
-  }
-
-  deleteAllFromCart = ()=>{
-    this.setState((state)=>state.panier = [])
-  }
-
-
-
   setCurrentUser = (user)=>{
     console.log(user);
     this.setState({currentUser: user})
@@ -71,11 +26,10 @@ class App extends React.Component{
     return (
       <div className="App">
         <header className="App-header">
-          <Link to="/produits?currentPage=0">Produits</Link>
-          <Link to="/categories">Categories</Link>
-          <Link to="/panier">Panier ({this.state.panier.length})</Link>
-          {(this.state.currentUser) && <div>
-                                        <span>Vous êtes connecté entant que : {this.state.currentUser.username} | </span>
+          <Link to="/produits?currentPage=0" ><button className="liens">Produits</button></Link>
+          <Link to="/categories" ><button className="liens">Categories</button></Link>
+          {(this.state.currentUser) && <div >
+                                        <span>{this.state.currentUser.username} | </span>
                                         <a href="/login" className="nav-link" onClick={this.logOut}>
                                         <button className="connexion">Se déconnecter</button>
                                         </a>
@@ -84,23 +38,15 @@ class App extends React.Component{
           
         </header>
         <main>
-          <Route path="/produits" render={(props)=> <Produits {...props} addToCart={this.addToCart} currentUser={this.state.currentUser} />}/>
-          <Route path="/panier" render={(props)=> <Panier {...props} panier={this.state.panier} deleteFromCart={this.deleteFromCart} editCartItem={this.editCartItem} deleteAllFromCart={this.deleteAllFromCart} />}/>
+          <Route path="/produits" render={(props)=> <Produits {...props} currentUser={this.state.currentUser} />}/>
           <Route path="/categories" component={Categories}/>
-          <Route exact path="/login" render={(props)=> <Login {...props} setCurrentUser={this.setCurrentUser} />}/>
-          <Route path="/access_denied" component={AccessDenied}/>
+          <Route path="/login" render={(props)=> <Login {...props} setCurrentUser={this.setCurrentUser} />}/>
         </main>
       </div>
     );
   }
   componentDidMount(){
-    let panier = JSON.parse(localStorage.getItem("panier")) || [];
     this.setState({currentUser : AuthService.getCurrentUser()})
   }
-  componentDidUpdate(){
-    console.log("componentDidUpdate");
-    localStorage.setItem("panier", JSON.stringify(this.state.panier));
-  }
 }
-
 export default App;

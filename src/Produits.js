@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import { Link, Route, Switch } from 'react-router-dom';
 import FicheProduit from './FicheProduit';
 import ProduitForm from './ProduitForm';
@@ -30,14 +31,15 @@ export default class Produits extends React.Component {
         this.getProduits(currentPage, this.state.parPage, this.state.motCle);
       }
 
-      getProduits=(numeroPage=this.state.currentPage, parPage=this.state.parPage, motCle="", categorie=this.state.categorie)=>{ 
-        ProduitService.getProduits(numeroPage, parPage, motCle,categorie).then((response)=>{
-            console.log(response.data);
-            this.setState({produits: response.data})
-          }, (error)=>{
-            console.log(error);
-          })
-        }
+        getProduits=(numeroPage=this.state.currentPage, parPage=this.state.parPage, motCle="", categorie=this.state.categorie)=>{ 
+          ProduitService.getProduits(numeroPage, parPage, motCle,categorie).then((response)=>{
+              console.log(response.data);
+              this.setState({produits: response.data})
+            }, (error)=>{
+              console.log(error);
+            })
+          }
+
         findAllProduitsByPrix=(numeroPage=this.state.currentPage, parPage=this.state.parPage, min=this.state.min, max=this.state.max)=>{ 
           ProduitService.findAllProduitsByPrix(numeroPage, parPage, min,max).then((response)=>{
               console.log(response.data);
